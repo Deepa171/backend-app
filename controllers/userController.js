@@ -1,13 +1,9 @@
 const User = require("../models/user");
 
+// POST: Frontend → DB
 exports.addUser = async (req, res) => {
   try {
-    // Last userId find karo
-    const lastUser = await User.findOne().sort({ userId: -1 });
-    const newUserId = lastUser ? lastUser.userId + 1 : 1;
-
     const user = new User({
-      userId: newUserId, // ✅ backend generate
       name: req.body.name,
       email: req.body.email,
       age: req.body.age
@@ -22,7 +18,8 @@ exports.addUser = async (req, res) => {
   }
 };
 
+// GET: DB → Frontend
 exports.getUsers = async (req, res) => {
-  const users = await User.find().sort({ userId: 1 });
+  const users = await User.find();
   res.json(users);
 };
