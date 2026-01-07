@@ -1,16 +1,27 @@
 const User = require("./../models/user");
 
-// POST: Frontend → DB
+// POST: Frontend → DB (with auto userId)
 exports.addUser = async (req, res) => {
   try {
-    const user = new User(req.body);
+    // 👉 last user nikalo (highest userId)
+    const lastUser = await User.findOne().sort({ userId: -1 });
+
+    let newUserId = 1;
+    if (lastUser && lastUser.userId) {
+      newUserId = lastUser.userId + 1;
+    }
+
+    const user = new User({
+      userId: newUserId,     // 👈 auto id
+      name: req.body.name,
+      email: req.body.email,
+      age: req.body.age
+    });
+
     const savedUser = await user.save();
 
-    console.log("Saved user:", savedUser);
-    res.status(201).json({
-      message: "User saved successfully",
-      user: savedUser
-    });
+    res.status(201).json(savedUser);
+
   } catch (error) {
     console.error("Error saving user:", error);
     res.status(500).json({
@@ -20,9 +31,8 @@ exports.addUser = async (req, res) => {
   }
 };
 
-
 // GET: DB → Frontend
 exports.getUsers = async (req, res) => {
-  const users = await User.find();
+  const users = await User.find().sort({ userId: 1 }); // ordered list
   res.json(users);
 };
