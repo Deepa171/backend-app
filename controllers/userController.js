@@ -1,18 +1,13 @@
-const User = require("./../models/user");
+const User = require("../models/user");
 
-// POST: Frontend → DB (with auto userId)
 exports.addUser = async (req, res) => {
   try {
-    // 👉 last user nikalo (highest userId)
+    // Last userId find karo
     const lastUser = await User.findOne().sort({ userId: -1 });
-
-    let newUserId = 1;
-    if (lastUser && lastUser.userId) {
-      newUserId = lastUser.userId + 1;
-    }
+    const newUserId = lastUser ? lastUser.userId + 1 : 1;
 
     const user = new User({
-      userId: newUserId,     // 👈 auto id
+      userId: newUserId, // ✅ backend generate
       name: req.body.name,
       email: req.body.email,
       age: req.body.age
@@ -20,19 +15,14 @@ exports.addUser = async (req, res) => {
 
     const savedUser = await user.save();
 
-    res.status(201).json(savedUser);
-
+    res.status(201).json({ message: "User saved!", user: savedUser });
   } catch (error) {
     console.error("Error saving user:", error);
-    res.status(500).json({
-      message: "Error saving user",
-      error: error.message
-    });
+    res.status(500).json({ message: "Error saving user", error: error.message });
   }
 };
 
-// GET: DB → Frontend
 exports.getUsers = async (req, res) => {
-  const users = await User.find().sort({ userId: 1 }); // ordered list
+  const users = await User.find().sort({ userId: 1 });
   res.json(users);
 };
