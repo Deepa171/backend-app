@@ -24,6 +24,8 @@ exports.addUser = async (req, res) => {
     console.error("Error saving user:", error);
     res.status(500).json({ message: "Error saving user", error: error.message });
   }
+  console.log("AUTO ID CONTROLLER WORKING 🔥");
+  
 };
 
 // GET: DB → Frontend
