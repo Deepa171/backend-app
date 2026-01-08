@@ -11,6 +11,7 @@ connectDB(); // DB connect
 
 const app = express();
 app.use(express.json()); // frontend se JSON lene ke liye
+app.use(express.urlencoded({ extended: true })); 
 app.use(cors());
 app.use("/api/users", require("./routes/userRoutes"));
 
